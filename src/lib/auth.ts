@@ -56,12 +56,15 @@ export function createAuth(env: AppBindings["env"]) {
     },
   },
   session: {
-    expiresIn: 60 * 60 * 24,
-    updateAge: 60 * 60,
+    expiresIn: 60 * 60 * 24, // 24 hours
+    updateAge: 60 * 60, // 1 hour
     cookieCache: {
       enabled: true,
-      maxAge: 5 * 60,
+      maxAge: 5 * 60, // 5 minutes
     },
+    cookiePrefix: "better-auth",
+    sameSite: "lax",
+    secure: false, // Set to true in production with HTTPS
   },
   rateLimit: {
     enabled: true,
@@ -77,6 +80,6 @@ export function createAuth(env: AppBindings["env"]) {
   secret: env.BETTER_AUTH_SECRET as string,
   baseURL: env.BETTER_AUTH_URL as string,
   trustedOrigins: [env.BETTER_AUTH_URL as string],
-  plugins: [openAPI(), bearer()],
+  plugins: [openAPI()],
   });
 }

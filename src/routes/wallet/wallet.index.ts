@@ -8,6 +8,7 @@ import {
 	validateParam,
 	validateQuery,
 } from "../../lib/validation";
+import authGuard from "../../middlewares/auth-guard";
 import {
 	type CreateWalletRequest,
 	createWalletSchema,
@@ -24,11 +25,12 @@ const router = createRouter();
 // GET /wallets - Get all wallets for authenticated user
 router.get(
 	"/wallets",
+	authGuard,
 	validateQuery(getWalletsQuerySchema, "Invalid query parameters"),
 	async (c) => {
 		const user = c.get("user");
 		const query = c.req.valid("query") as GetWalletsQuery;
-		const db = createDb(c.env as string);
+		const db = createDb((c.env as any).DATABASE_URL!);
 
 		try {
 			// Build where conditions
@@ -95,11 +97,12 @@ router.get(
 // POST /wallets - Create a new wallet
 router.post(
 	"/wallets",
+	authGuard,
 	validateJson(createWalletSchema, "Invalid wallet data"),
 	async (c) => {
 		const user = c.get("user");
 		const data = c.req.valid("json") as CreateWalletRequest;
-		const db = createDb(c.env as string);
+		const db = createDb((c.env as any).DATABASE_URL!);
 
 		try {
 			// If this wallet is being set as default, unset other default wallets
@@ -156,13 +159,14 @@ router.post(
 // PUT /wallets/:walletId - Update wallet
 router.put(
 	"/wallets/:walletId",
+	authGuard,
 	validateParam(walletIdSchema, "Invalid wallet ID"),
 	validateJson(updateWalletSchema, "Invalid wallet data"),
 	async (c) => {
 		const user = c.get("user");
 		const params = c.req.valid("param") as WalletIdParam;
 		const data = c.req.valid("json") as UpdateWalletRequest;
-		const db = createDb(c.env as string);
+		const db = createDb((c.env as any).DATABASE_URL!);
 
 		try {
 			// Check if wallet exists and belongs to user
@@ -232,14 +236,15 @@ router.put(
 	},
 );
 
-// DELETE /wallets/:walletId - Delete wallet (soft delete)
+// DELETE /wallets/:walletId - Delete wallet (hard delete)
 router.delete(
 	"/wallets/:walletId",
+	authGuard,
 	validateParam(walletIdSchema, "Invalid wallet ID"),
 	async (c) => {
 		const user = c.get("user");
 		const params = c.req.valid("param") as WalletIdParam;
-		const db = createDb(c.env as string);
+		const db = createDb((c.env as any).DATABASE_URL!);
 
 		try {
 			// Check if wallet exists and belongs to user
@@ -284,13 +289,9 @@ router.delete(
 				);
 			}
 
-			// Perform soft delete (set isActive to false)
+			// Perform hard delete (permanently remove from database)
 			await db
-				.update(wallet)
-				.set({
-					isActive: false,
-					updatedAt: new Date(),
-				})
+				.delete(wallet)
 				.where(
 					and(eq(wallet.id, params.walletId), eq(wallet.userId, user!.id)),
 				);
@@ -316,11 +317,12 @@ router.delete(
 // PATCH /wallets/:walletId/set-default - Set wallet as default
 router.patch(
 	"/wallets/:walletId/set-default",
+	authGuard,
 	validateParam(walletIdSchema, "Invalid wallet ID"),
 	async (c) => {
 		const user = c.get("user");
 		const params = c.req.valid("param") as WalletIdParam;
-		const db = createDb(c.env as string);
+		const db = createDb((c.env as any).DATABASE_URL!);
 
 		try {
 			// Check if wallet exists and belongs to user

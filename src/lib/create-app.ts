@@ -17,7 +17,7 @@ export function createRouter() {
 export default function createApp() {
 	const app = createRouter();
 	app.use((c, next) => {
-		c.env = parseEnv(Object.assign(c.env || {}, process.env));
+		c.env = parseEnv(c.env || {});
 		c.set("auth", createAuth(c.env as any));
 		return next();
 	});

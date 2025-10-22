@@ -9,14 +9,13 @@ export default async function withSession(c: Context<AppBindings>, next: Next) {
         headers: c.req.raw.headers,
       });
       
-      if (session) {
+      if (session && session.user && session.session) {
         c.set("user", session.user);
         c.set("session", session.session);
       }
     }
   } catch (error) {
     // Session is optional, continue without it
-    console.log("No valid session found");
   }
   
   await next();
