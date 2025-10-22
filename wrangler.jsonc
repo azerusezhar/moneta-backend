@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "moneta-backend",
+  "main": "src/index.ts",
+  "compatibility_date": "2025-10-21",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "dev": {
+    "port": 3000
+  },
+  "vars": {
+    "NODE_ENV": "production",
+    "BETTER_AUTH_URL": "https://moneta-backend.azerusezhar05.workers.dev",
+    "BETTER_AUTH_SECRET": "0HDGY7sYn9SGPSlGFUds7bioESbo9YeP",
+    "DATABASE_URL": "postgresql://neondb_owner:npg_YqOk8hepfM2J@ep-old-darkness-a1wxagdk-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require",
+    "RESEND_API_KEY": "re_itKBSEQz_Ff6WcxpnYZQPUcRsBoCWxgAM",
+    "FROM_EMAIL": "noreply@moneta.dev",
+    "GOOGLE_CLIENT_ID": "1082856457889-3harags1pahus95tmel5665hhdh118so.apps.googleusercontent.com",
+    "GOOGLE_CLIENT_SECRET": "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"
+  }
+}
